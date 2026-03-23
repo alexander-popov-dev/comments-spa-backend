@@ -1,12 +1,11 @@
-from django.db import models
-
 from django.conf import settings
+from django.db import models
 
 
 class Comment(models.Model):
-    username = models.CharField(max_length = 150)
+    username = models.CharField(max_length=150)
     email = models.EmailField()
-    homepage = models.URLField(null=True, blank=True)
+    homepage = models.URLField(blank=True)
     comment = models.TextField()
     text_file = models.FileField(upload_to="comments/text_file", null=True, blank=True)
     image_file = models.ImageField(upload_to="comments/image_file", null=True, blank=True)

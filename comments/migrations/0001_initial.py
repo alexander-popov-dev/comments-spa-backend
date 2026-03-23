@@ -23,7 +23,12 @@ class Migration(migrations.Migration):
                 ('text_file', models.FileField(blank=True, null=True, upload_to='comments/text_file')),
                 ('image_file', models.ImageField(blank=True, null=True, upload_to='comments/image_file')),
                 ('created_at', models.DateTimeField(auto_now_add=True, db_index=True)),
-                ('parent_comment', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='replies', to='comments.comment')),
+                ('parent_comment', models.ForeignKey(
+                    blank=True,
+                    null=True,
+                    on_delete=django.db.models.deletion.CASCADE,
+                    related_name='replies', to='comments.comment'
+                )),
             ],
             options={
                 'db_table': 'comment',
