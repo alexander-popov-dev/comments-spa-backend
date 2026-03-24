@@ -3,6 +3,8 @@ from django.db import models
 
 
 class Comment(models.Model):
+    """Comment model. Supports nested replies and optional file attachments."""
+
     username = models.CharField(max_length=150)
     email = models.EmailField()
     homepage = models.URLField(blank=True)
