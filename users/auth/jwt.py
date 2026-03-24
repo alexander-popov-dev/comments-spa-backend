@@ -5,7 +5,7 @@ from rest_framework_simplejwt.exceptions import TokenError as JWTTokenError
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from users.auth.base import BaseAuth
-from users.dto import AuthResponseDTO
+from users.dto import JWTAuthResponse
 from users.exceptions import AuthenticationError, InvalidTokenError
 from users.models import User
 
@@ -15,14 +15,14 @@ logger = logging.getLogger(__name__)
 class JWTAuth(BaseAuth):
     """JWT-based authentication backend."""
 
-    def register(self, validated_data: dict) -> AuthResponseDTO:
+    def register(self, validated_data: dict) -> JWTAuthResponse:
         """Create a new user and return JWT tokens."""
         validated_data.pop("password2")
         user = User.objects.create_user(**validated_data)
         logger.info("New user registered: %s", user.email)
         return self._make_tokens(user)
 
-    def login(self, email: str, password: str) -> AuthResponseDTO:
+    def login(self, email: str, password: str) -> JWTAuthResponse:
         """Authenticate user and return JWT tokens."""
         user = authenticate(email=email, password=password)
         if not user:
@@ -38,10 +38,10 @@ class JWTAuth(BaseAuth):
         except JWTTokenError:
             raise InvalidTokenError("Invalid token")
 
-    def _make_tokens(self, user: User) -> AuthResponseDTO:
+    def _make_tokens(self, user: User) -> JWTAuthResponse:
         """Generate access and refresh tokens for the given user."""
         refresh = RefreshToken.for_user(user)
-        return AuthResponseDTO(
+        return JWTAuthResponse(
             username=user.username,
             email=user.email,
             access=str(refresh.access_token),
