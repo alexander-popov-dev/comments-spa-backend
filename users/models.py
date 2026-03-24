@@ -4,12 +4,10 @@ from django.db import models
 
 
 class User(AbstractUser):
+    """Custom user model. Uses email as the primary identifier."""
+
     email = models.EmailField(unique=True)
-    username = models.CharField(
-        max_length=150,
-        unique=True,
-        validators=[RegexValidator(r"^[a-zA-Z0-9]+$")]
-    )
+    username = models.CharField(max_length=150, unique=True, validators=[RegexValidator(r"^[a-zA-Z0-9]+$")])
     homepage = models.URLField(blank=True)
 
     USERNAME_FIELD = "email"

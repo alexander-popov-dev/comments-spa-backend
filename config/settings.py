@@ -9,7 +9,9 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
+
 import os
+from datetime import timedelta
 from pathlib import Path
 
 from decouple import Config, Csv, RepositoryEnv
@@ -50,9 +52,10 @@ INSTALLED_APPS = [
     "users.apps.UsersConfig",
     "comments.apps.CommentsConfig",
     "rest_framework",
+    "rest_framework_simplejwt.token_blacklist",
     "corsheaders",
     "captcha",
-    "django_celery_results"
+    "django_celery_results",
 ]
 
 MIDDLEWARE = [
@@ -143,6 +146,14 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ],
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticatedOrReadOnly",
+    ],
+}
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
 }
 
 # Internationalization
@@ -171,7 +182,7 @@ MEDIA_ROOT = BASE_DIR / "media"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Celery
-CELERY_BROKER_URL = f'{REDIS_URL}/{config("CELERY_BROKER_DB", default=0)}'
+CELERY_BROKER_URL = f"{REDIS_URL}/{config('CELERY_BROKER_DB', default=0)}"
 CELERY_RESULT_BACKEND = "django-db"
 CELERY_RESULT_EXTENDED = True
 CELERY_TASK_TRACK_STARTED = True
