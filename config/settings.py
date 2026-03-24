@@ -24,7 +24,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Decouple initialization.
 env_file = os.getenv("ENV_FILE", ".env")
-config = Config(RepositoryEnv(env_file))
+if Path(env_file).exists():
+    config = Config(RepositoryEnv(env_file))
+else:
+    from decouple import AutoConfig
+
+    config = AutoConfig()
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config("SECRET_KEY")
