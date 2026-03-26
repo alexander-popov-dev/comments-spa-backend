@@ -61,6 +61,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "captcha",
     "django_celery_results",
+    "drf_spectacular",
 ]
 
 MIDDLEWARE = [
