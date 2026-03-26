@@ -39,6 +39,19 @@ class CommentSerializer(serializers.ModelSerializer):
         return attrs
 
 
+class CommentDetailSerializer(serializers.ModelSerializer):
+    """Serializer for retrieving a single comment with full reply tree."""
+
+    replies = serializers.SerializerMethodField()
+
+    def get_replies(self, obj):
+        return CommentDetailSerializer(obj.replies.order_by("created_at").all(), many=True).data
+
+    class Meta:
+        model = Comment
+        fields = ["id", "user", "username", "email", "comment", "created_at", "updated_at", "replies"]
+
+
 class UpdateCommentSerializer(serializers.ModelSerializer):
     """Serializer for updating comment text only."""
 
