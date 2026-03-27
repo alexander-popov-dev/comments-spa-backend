@@ -198,3 +198,7 @@ CELERY_TIMEZONE = TIME_ZONE
 CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
+
+# Comment allowed HTML tags and attributes.
+COMMENT_ALLOWED_HTML_TAGS = ["a", "code", "i", "strong"]
+COMMENT_ALLOWED_HTML_ATTRIBUTES = {"a": ["href", "title"]}
