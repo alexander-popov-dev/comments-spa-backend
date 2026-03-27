@@ -28,6 +28,8 @@ uvicorn = "^0.29"
 [tool.poetry.group.local.dependencies]
 pytest-django = "^4.12"
 ruff = "^0.15"
+djangorestframework-stubs = "^3.16.8"
+celery-types = "^0.26.0"
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "config.settings"
