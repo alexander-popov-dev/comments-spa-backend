@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from comments.models import Comment
+from comments.validators import validate_html_tags, validate_xhtml_structure
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -38,6 +39,10 @@ class CommentSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError({"email": "This field is required."})
         return attrs
 
+    def validate_comment(self, value):
+        validate_xhtml_structure(value=value)
+        return validate_html_tags(value=value)
+
 
 class CommentDetailSerializer(serializers.ModelSerializer):
     """Serializer for retrieving a single comment with full reply tree."""
@@ -71,3 +76,7 @@ class UpdateCommentSerializer(serializers.ModelSerializer):
             "created_at": {"read_only": True},
             "updated_at": {"read_only": True},
         }
+
+    def validate_comment(self, value):
+        validate_xhtml_structure(value=value)
+        return validate_html_tags(value=value)
