@@ -61,6 +61,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "captcha",
     "django_celery_results",
+    "drf_spectacular",
 ]
 
 MIDDLEWARE = [
@@ -154,6 +155,9 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticatedOrReadOnly",
     ],
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": config("PAGE_SIZE", default=25, cast=int),
 }
 
 SIMPLE_JWT = {
@@ -196,3 +200,7 @@ CELERY_TIMEZONE = TIME_ZONE
 CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
+
+# Comment allowed HTML tags and attributes.
+COMMENT_ALLOWED_HTML_TAGS = ["a", "code", "i", "strong"]
+COMMENT_ALLOWED_HTML_ATTRIBUTES = {"a": ["href", "title"]}

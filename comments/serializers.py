@@ -1,10 +1,18 @@
+from django.core.validators import RegexValidator
 from rest_framework import serializers
 
 from comments.models import Comment
+from comments.validators import validate_html_tags, validate_xhtml_structure
 
 
 class CommentSerializer(serializers.ModelSerializer):
     """Serializer for creating and retrieving comments."""
+
+    username = serializers.CharField(
+        min_length=2,
+        max_length=150,
+        validators=[RegexValidator(regex=r"^[a-zA-Z0-9]+$", message="Username must contain only letters and numbers.")],
+    )
 
     class Meta:
         model = Comment
@@ -38,6 +46,23 @@ class CommentSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError({"email": "This field is required."})
         return attrs
 
+    def validate_comment(self, value):
+        validate_xhtml_structure(value=value)
+        return validate_html_tags(value=value)
+
+
+class CommentDetailSerializer(serializers.ModelSerializer):
+    """Serializer for retrieving a single comment with full reply tree."""
+
+    replies = serializers.SerializerMethodField()
+
+    def get_replies(self, obj):
+        return CommentDetailSerializer(obj.replies.order_by("created_at").all(), many=True).data
+
+    class Meta:
+        model = Comment
+        fields = ["id", "user", "username", "email", "comment", "created_at", "updated_at", "replies"]
+
 
 class UpdateCommentSerializer(serializers.ModelSerializer):
     """Serializer for updating comment text only."""
@@ -58,3 +83,7 @@ class UpdateCommentSerializer(serializers.ModelSerializer):
             "created_at": {"read_only": True},
             "updated_at": {"read_only": True},
         }
+
+    def validate_comment(self, value):
+        validate_xhtml_structure(value=value)
+        return validate_html_tags(value=value)
