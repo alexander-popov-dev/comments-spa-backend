@@ -1,3 +1,4 @@
+from django.core.validators import RegexValidator
 from rest_framework import serializers
 
 from comments.models import Comment
@@ -6,6 +7,12 @@ from comments.validators import validate_html_tags, validate_xhtml_structure
 
 class CommentSerializer(serializers.ModelSerializer):
     """Serializer for creating and retrieving comments."""
+
+    username = serializers.CharField(
+        min_length=2,
+        max_length=150,
+        validators=[RegexValidator(regex=r"^[a-zA-Z0-9]+$", message="Username must contain only letters and numbers.")],
+    )
 
     class Meta:
         model = Comment
