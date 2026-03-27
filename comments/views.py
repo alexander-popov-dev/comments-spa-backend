@@ -6,13 +6,16 @@ from rest_framework.viewsets import ModelViewSet
 
 from comments.models import Comment
 from comments.permissions import IsOwner
-from comments.serializers import CommentSerializer, UpdateCommentSerializer
+from comments.serializers import CommentDetailSerializer, CommentSerializer, UpdateCommentSerializer
 
 
 class CommentViewSet(ModelViewSet):
     """ViewSet for creating, retrieving, updating, deleting and replying to comments."""
 
-    queryset = Comment.objects.all()
+    def get_queryset(self):
+        if self.action == "list":
+            return Comment.objects.filter(parent_comment=None)
+        return Comment.objects.all()
 
     def get_permissions(self):
         """Allow only authenticated owners to update or delete comments."""
@@ -24,6 +27,8 @@ class CommentViewSet(ModelViewSet):
         """Use a restricted serializer for update actions."""
         if self.action in ["update", "partial_update"]:
             return UpdateCommentSerializer
+        if self.action == "retrieve":
+            return CommentDetailSerializer
         return CommentSerializer
 
     def perform_create(self, serializer):
