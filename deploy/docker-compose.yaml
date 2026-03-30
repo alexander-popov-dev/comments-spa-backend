@@ -77,8 +77,10 @@ services:
     build:
       context: ..
       dockerfile: deploy/Dockerfile
-    command: celery --app config worker -Q manage -c 1 --loglevel=info
+    command: celery --app config worker -c 1 --loglevel=info
     restart: always
+    volumes:
+      - ../media:/app/media
     env_file:
       - ../${APP_ENV_FILE:-.env}
     depends_on:
