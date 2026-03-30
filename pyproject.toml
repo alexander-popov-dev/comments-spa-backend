@@ -20,6 +20,8 @@ pillow = "^12.1"
 bleach = "^6.3"
 drf-spectacular = "^0.29.0"
 lxml = "^6.0.2"
+channels = "^4.3.2"
+channels-redis = "^4.3.0"
 
 [tool.poetry.group.server.dependencies]
 gunicorn = "^21.0"
