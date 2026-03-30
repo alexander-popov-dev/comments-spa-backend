@@ -7,7 +7,7 @@ from django.dispatch import receiver
 from comments.serializers import CommentSerializer
 
 from .models import Comment
-from .tasks import process_comment_image
+from .tasks import comment_image_resize_task
 
 channel_layer = get_channel_layer()
 
@@ -18,7 +18,7 @@ def on_comment_created(sender, instance, created, **kwargs):
     if created:
         cache.delete("comments_list")
         if instance.image_file:
-            process_comment_image.apply_async(kwargs={"comment_id": instance.id})
+            comment_image_resize_task.apply_async(kwargs={"comment_id": instance.id})
         async_to_sync(channel_layer.group_send)(
             "comments", {"type": "new_comment", "data": CommentSerializer(instance).data}
         )
