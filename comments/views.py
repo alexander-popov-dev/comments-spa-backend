@@ -1,13 +1,23 @@
+import logging
+
 from rest_framework import permissions, status
 from rest_framework.decorators import action
 from rest_framework.filters import OrderingFilter
 from rest_framework.generics import get_object_or_404
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from comments.models import Comment
 from comments.permissions import IsOwner
-from comments.serializers import CommentDetailSerializer, CommentSerializer, UpdateCommentSerializer
+from comments.serializers import (
+    CommentDetailSerializer,
+    CommentPreviewSerializer,
+    CommentSerializer,
+    UpdateCommentSerializer,
+)
+
+logger = logging.getLogger(__name__)
 
 
 class CommentViewSet(ModelViewSet):
@@ -43,7 +53,18 @@ class CommentViewSet(ModelViewSet):
     def perform_create(self, serializer):
         """Attach authenticated user data on comment creation."""
         user_data = self._attach_user(user=self.request.user)
-        serializer.save(**user_data)
+        comment = serializer.save(**user_data)
+        logger.info("Comment created: id=%s by %s", comment.id, self._user_label())
+
+    def perform_update(self, serializer):
+        """Log comment update."""
+        comment = serializer.save()
+        logger.info("Comment updated: id=%s by %s", comment.id, self._user_label())
+
+    def perform_destroy(self, instance):
+        """Log comment deletion."""
+        logger.info("Comment deleted: id=%s by %s", instance.id, self._user_label())
+        instance.delete()
 
     @action(detail=True, methods=["post"])
     def reply(self, request, pk=None):
@@ -52,12 +73,26 @@ class CommentViewSet(ModelViewSet):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user_data = self._attach_user(user=self.request.user)
-        serializer.save(parent_comment_id=pk, **user_data)
+        reply = serializer.save(parent_comment_id=pk, **user_data)
+        logger.info("Reply created: id=%s for comment %s by %s", reply.id, pk, self._user_label())
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    @action(detail=False, methods=["post"], permission_classes=[AllowAny])
+    def preview(self, request):
+        serializer = CommentPreviewSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        logger.debug("Comment preview requested by %s", self._user_label())
+
+        return Response({"comment": serializer.validated_data["comment"]})
 
     def _attach_user(self, user):
         if user and user.is_authenticated:
             return {"user": user, "username": user.username, "email": user.email}
 
         return {}
+
+    def _user_label(self) -> str:
+        """Return a loggable user identifier."""
+        user = self.request.user
+        return user.email if user.is_authenticated else "anonymous"
