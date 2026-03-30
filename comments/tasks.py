@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from celery import shared_task
 
 from .models import Comment
@@ -14,5 +16,7 @@ def comment_image_resize_task(comment_id: int):
 
     if comment.image_file:
         resized = CommentService.resize_image(comment.image_file)
-        comment.image_file = resized
+        original_name = Path(comment.image_file.name).name
+        comment.image_file.delete(save=False)
+        comment.image_file.save(original_name, resized, save=False)
         comment.save(update_fields=["image_file"])
