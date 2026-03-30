@@ -126,6 +126,14 @@ CACHES = {
     }
 }
 
+# Channels
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {"hosts": [REDIS_URL]},
+    }
+}
+
 # Default users model.
 AUTH_USER_MODEL = "users.User"
 
