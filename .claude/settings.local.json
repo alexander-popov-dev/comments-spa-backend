@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find /d/Projects/my/comments-spa -type d -not -path */.venv/* -not -path */.git/* -not -path */__pycache__/*)"
+    ]
+  }
+}
