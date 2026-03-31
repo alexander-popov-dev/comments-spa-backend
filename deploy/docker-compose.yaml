@@ -44,8 +44,8 @@ services:
       > /etc/nginx/nginx.conf
       && nginx -g 'daemon off;'"
     volumes:
-      - ../static:/static
-      - ../media:/media
+      - ../backend/static:/static
+      - ../backend/media:/media
       - ./nginx/nginx.conf.template:/etc/nginx/nginx.conf.template:ro
     ports:
       - ${NGINX_PORT}:80
@@ -56,14 +56,14 @@ services:
 
   comments-spa-server:
     build:
-      context: ..
-      dockerfile: deploy/Dockerfile
+      context: ../backend
+      dockerfile: Dockerfile
     command: [ "/bin/bash", "/app/entrypoint.sh" ]
     ports:
       - ${DJANGO_SERVER_PORT}:${DJANGO_SERVER_PORT}
     volumes:
-      - ../static:/app/static
-      - ../media:/app/media
+      - ../backend/static:/app/static
+      - ../backend/media:/app/media
     restart: always
     env_file:
       - ../${APP_ENV_FILE:-.env}
@@ -75,12 +75,12 @@ services:
 
   comments-spa-worker:
     build:
-      context: ..
-      dockerfile: deploy/Dockerfile
+      context: ../backend
+      dockerfile: Dockerfile
     command: celery --app config worker -c 1 --loglevel=info
     restart: always
     volumes:
-      - ../media:/app/media
+      - ../backend/media:/app/media
     env_file:
       - ../${APP_ENV_FILE:-.env}
     depends_on:
