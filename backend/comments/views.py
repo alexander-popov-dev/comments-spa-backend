@@ -1,5 +1,6 @@
 import logging
 
+from django.db.models import Count
 from rest_framework import permissions, status
 from rest_framework.decorators import action
 from rest_framework.filters import OrderingFilter
@@ -29,7 +30,7 @@ class CommentViewSet(ModelViewSet):
 
     def get_queryset(self):
         if self.action == "list":
-            return Comment.objects.filter(parent_comment=None)
+            return Comment.objects.filter(parent_comment=None).annotate(replies_count=Count("replies"))
 
         return Comment.objects.all()
 

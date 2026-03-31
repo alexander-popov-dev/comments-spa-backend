@@ -19,6 +19,7 @@ class CommentSerializer(serializers.ModelSerializer):
         max_length=150,
         validators=[RegexValidator(regex=r"^[a-zA-Z0-9]+$", message="Username must contain only letters and numbers.")],
     )
+    replies_count = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Comment
@@ -32,6 +33,7 @@ class CommentSerializer(serializers.ModelSerializer):
             "comment",
             "text_file",
             "image_file",
+            "replies_count",
             "created_at",
             "updated_at",
         ]
