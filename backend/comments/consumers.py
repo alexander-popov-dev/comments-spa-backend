@@ -2,7 +2,7 @@ from channels.generic.websocket import AsyncJsonWebsocketConsumer
 
 
 class CommentConsumer(AsyncJsonWebsocketConsumer):
-    """WebSocket consumer that broadcasts new comments to all connected clients."""
+    """WebSocket consumer that broadcasts comment events to all connected clients."""
 
     async def connect(self):
         """Add client to the comments group on connection."""
@@ -13,6 +13,6 @@ class CommentConsumer(AsyncJsonWebsocketConsumer):
         """Remove client from the comments group on disconnection."""
         await self.channel_layer.group_discard("comments", self.channel_name)
 
-    async def new_comment(self, event):
-        """Send new comment data to the WebSocket client."""
+    async def comment_event(self, event):
+        """Forward a comment event (created/updated/deleted) to the WebSocket client."""
         await self.send_json(event["data"])
