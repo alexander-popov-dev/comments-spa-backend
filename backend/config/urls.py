@@ -23,6 +23,7 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("captcha/", include("captcha.urls")),
     path("api/auth/", include("users.urls")),
     path("api/", include("comments.urls")),
     path("api/v1/schema/", SpectacularAPIView.as_view(), name="schema"),
