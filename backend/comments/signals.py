@@ -3,7 +3,7 @@ import logging
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.core.cache import cache
-from django.db.models.signals import post_save
+from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
 
 from comments.serializers import CommentSerializer
@@ -16,14 +16,32 @@ channel_layer = get_channel_layer()
 
 
 @receiver(post_save, sender=Comment)
-def on_comment_created(sender, instance, created, **kwargs):
-    """On new comment: invalidate the comments list cache and trigger async image processing if needed."""
+def on_comment_saved(sender, instance, created, **kwargs):
+    """On save: invalidate cache, queue image resize if needed, broadcast event via WebSocket."""
     if created:
         logger.info("New comment created: id=%s", instance.id)
         cache.delete("comments_list")
         if instance.image_file:
             comment_image_resize_task.apply_async(kwargs={"comment_id": instance.id})
             logger.info("Image resize task queued for comment %s", instance.id)
-        async_to_sync(channel_layer.group_send)(
-            "comments", {"type": "new_comment", "data": CommentSerializer(instance).data}
-        )
+
+    action = "created" if created else "updated"
+    async_to_sync(channel_layer.group_send)(
+        "comments",
+        {
+            "type": "comment_event",
+            "data": {"action": action, "comment": CommentSerializer(instance).data},
+        },
+    )
+
+
+@receiver(post_delete, sender=Comment)
+def on_comment_deleted(sender, instance, **kwargs):
+    """On delete: broadcast deleted event with comment id via WebSocket."""
+    async_to_sync(channel_layer.group_send)(
+        "comments",
+        {
+            "type": "comment_event",
+            "data": {"action": "deleted", "id": instance.id},
+        },
+    )
