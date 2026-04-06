@@ -10,7 +10,6 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
-from comments.captcha import CaptchaService
 from comments.models import Comment
 from comments.permissions import IsOwner
 from comments.serializers import (
@@ -19,6 +18,7 @@ from comments.serializers import (
     CommentSerializer,
     UpdateCommentSerializer,
 )
+from comments.services import CaptchaService
 
 logger = logging.getLogger(__name__)
 

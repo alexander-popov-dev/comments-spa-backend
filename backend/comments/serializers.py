@@ -1,8 +1,8 @@
 from django.core.validators import RegexValidator
 from rest_framework import serializers
 
-from comments.captcha import CaptchaService
 from comments.models import Comment
+from comments.services import CaptchaService
 from comments.validators import (
     validate_html_tags,
     validate_image_file_format,
