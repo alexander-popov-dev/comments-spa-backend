@@ -2,7 +2,6 @@
 import {ref} from 'vue'
 import {useAuthStore} from '@/stores/auth'
 import {useRouter} from 'vue-router'
-import AppHeader from "@/components/AppHeader.vue";
 
 const store = useAuthStore()
 const router = useRouter()
@@ -38,7 +37,6 @@ async function submit() {
 </script>
 
 <template>
-  <AppHeader/>
   <main class="container">
     <form @submit.prevent="submit">
       <div class="form-container">
