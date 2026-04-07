@@ -12,7 +12,7 @@ const props = defineProps({
 
 const emit = defineEmits(['close'])
 const authStore = useAuthStore()
-const { updateComment, createReply, createComment } = useCommentsStore() // eslint-disable-line
+const { updateComment, createReply, createComment } = useCommentsStore()
 const errors = ref({})
 const textareaRef = ref(null)
 const file = ref(null)
