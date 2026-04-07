@@ -48,6 +48,7 @@ async function refreshReplies() {
 async function onFormClose() {
   showForm.value = false
   if (formMode.value === 'reply') {
+    commentsStore.incrementRepliesCount(props.comment.id)
     replies.value = await commentsStore.fetchReplies(props.comment.id)
     showReplies.value = true
   }
@@ -57,19 +58,6 @@ async function onFormClose() {
 const lightboxUrl = ref(null)
 const imageError = ref(false)
 
-watch(() => props.comment.image_file, () => {
-  imageError.value = false
-})
-
-watch(() => commentsStore.newReplyEvent, async (event) => {
-  if (!event || event.parentId !== props.comment.id) return
-  if (showReplies.value) {
-    replies.value.push(event.reply)
-  } else {
-    replies.value = await commentsStore.fetchReplies(props.comment.id)
-    showReplies.value = true
-  }
-})
 const apiUrl = import.meta.env.VITE_API_URL || ''
 function getFileName(path) {
   return path.split('/').pop().split('?')[0]
@@ -137,7 +125,7 @@ function openLightbox() {
         <div v-if="imageError" class="no-image">No image</div>
       </div>
       <div v-if="comment.text_file" class="comment-file">
-        <a class="file-link" @click.prevent="viewTextFile">{{ getFileName(comment.text_file) }}</a>
+        <a class="file-link" @click.prevent="viewTextFile">{{ comment.text_file_name || getFileName(comment.text_file) }}</a>
       </div>
       </div>
       <div class="comment-footer">
