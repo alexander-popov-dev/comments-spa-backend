@@ -48,6 +48,6 @@ export const useAuthStore = defineStore('auth', () => {
         localStorage.setItem('email', response.data.email)
     }
 
-    return {user, accessToken, refreshToken, register, login, logout}
+    return {user, register, login, logout}
 
 })
