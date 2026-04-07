@@ -1,1 +1,35 @@
+# .gitattributes
+
 text=auto
+
+# Python
+*.py     text diff=python eol=lf
+*.pyw    text diff=python eol=lf
+*.pyi    text diff=python eol=lf
+*.pyc    binary export-ignore
+*.pyo    binary export-ignore
+*.pyd    binary
+
+# Frontend
+*.js     text eol=lf
+*.vue    text eol=lf
+*.css    text eol=lf
+*.scss   text eol=lf
+*.html   text eol=lf
+
+# Config
+*.sh     text eol=lf
+*.yaml   text eol=lf
+*.yml    text eol=lf
+*.json   text eol=lf
+*.env    text eol=lf
+
+# Binary
+*.png    binary
+*.jpg    binary
+*.jpeg   binary
+*.gif    binary
+*.db     binary
+*.pkl    binary
+*.pickle binary
+*.p      binary
