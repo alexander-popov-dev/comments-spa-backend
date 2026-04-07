@@ -20,7 +20,7 @@ async function logout() {
 
     <nav class="menu" :class="{ open: menuOpen }">
 
-      <template v-if="auth.accessToken">
+      <template v-if="auth.user">
         <a>{{ auth.user?.username }}</a>
         <a @click="logout">Sign Out</a>
       </template>
@@ -71,7 +71,7 @@ a {
   font-size: 14px;
 }
 
-&:hover {
+a:hover {
   color: var(--accent);
 }
 
