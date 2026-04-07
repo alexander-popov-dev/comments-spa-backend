@@ -36,6 +36,3 @@ async function submit() {
   </main>
 </template>
 
-<style scoped>
-
-</style>
