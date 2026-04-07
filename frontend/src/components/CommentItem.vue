@@ -184,10 +184,8 @@ button {
 }
 
 .comment-item {
-  background: var(--accent-bg);
   border-radius: 10px;
   margin-bottom: 30px;
-  transition: margin 0.9s ease;
   background: var(--surface);
   border: 1px solid var(--border);
 }
@@ -218,7 +216,6 @@ span:first-child {
   font-size: 15px;
   color: var(--text-h);
   word-break: break-word;
-  white-space: pre-wrap;
 }
 
 .comment-footer {
