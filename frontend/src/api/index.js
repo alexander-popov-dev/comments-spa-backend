@@ -29,7 +29,10 @@ api.interceptors.response.use(
                 original.headers.Authorization = `Bearer ${response.data.access}`
                 return api(original)
             } catch {
-                localStorage.clear()
+                localStorage.removeItem('access')
+                localStorage.removeItem('refresh')
+                localStorage.removeItem('username')
+                localStorage.removeItem('email')
                 window.location.href = '/login'
             }
         }
