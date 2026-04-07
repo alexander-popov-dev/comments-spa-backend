@@ -1,5 +1,5 @@
 <script setup>
-import {computed, onMounted, ref} from 'vue'
+import {computed, onMounted, onUnmounted, ref} from 'vue'
 import useCommentsStore from '@/stores/comments'
 import CommentItem from '@/components/CommentItem.vue'
 import {vAutoAnimate} from '@formkit/auto-animate/vue'
@@ -18,6 +18,11 @@ const ORDER_FIELDS = [
 
 onMounted(() => {
   store.fetchComments()
+  store.connectWS()
+})
+
+onUnmounted(() => {
+  store.disconnectWS()
 })
 
 function changePage(page) {
@@ -35,13 +40,14 @@ function toggleDir() {
 function createComment() {
   showForm.value = true
 }
+
 </script>
 
 <template>
   <div>
     <!-- Header -->
     <div class="header">
-      <button class="btn" @click="createComment">Add</button>
+      <button class="btn btn-modal" @click="createComment">Add</button>
       <div class="filters">
         <span class="filters-label">Sort by:</span>
         <select class="filters-select" :value="store.orderField" @change="onFieldChange">
@@ -64,9 +70,9 @@ function createComment() {
 
     <!-- Pagination -->
     <div class="pagination">
-      <button class="btn" :disabled="currentPage === 1" @click="changePage(currentPage - 1)">←</button>
+      <button class="btn btn-modal" :disabled="currentPage === 1" @click="changePage(currentPage - 1)">←</button>
       <span class="pagination-text">{{ currentPage }} / {{ totalPages }}</span>
-      <button class="btn" :disabled="currentPage === totalPages" @click="changePage(currentPage + 1)">→</button>
+      <button class="btn btn-modal" :disabled="currentPage === totalPages" @click="changePage(currentPage + 1)">→</button>
     </div>
   </div>
 
@@ -121,7 +127,7 @@ function createComment() {
 }
 
 .pagination {
-  max-width: 30%;
+  max-width: 20%;
   display: flex;
   margin: 30px auto;
 }
@@ -129,5 +135,9 @@ function createComment() {
 .pagination-text {
   margin: auto;
   font-size: 13px;
+}
+
+.btn-modal {
+  padding: 0 10px;
 }
 </style>
