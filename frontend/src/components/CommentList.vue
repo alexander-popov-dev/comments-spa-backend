@@ -6,7 +6,7 @@ import {vAutoAnimate} from '@formkit/auto-animate/vue'
 import CommentForm from "@/components/CommentForm.vue";
 
 const store = useCommentsStore()
-const totalPages = computed(() => Math.ceil(store.totalCount / 25))
+const totalPages = computed(() => Math.ceil(store.totalCount / 25) || 1)
 const currentPage = computed(() => store.currentPage)
 const showForm = ref(false)
 
