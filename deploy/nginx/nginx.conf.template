@@ -8,7 +8,7 @@ http {
     client_max_body_size 10M;
 
     upstream backend {
-        server comments-spa-server:${DJANGO_SERVER_PORT};
+        server comments-spa-backend:${DJANGO_SERVER_PORT};
     }
 
     server {
