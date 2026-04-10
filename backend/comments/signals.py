@@ -18,9 +18,11 @@ channel_layer = get_channel_layer()
 @receiver(post_save, sender=Comment)
 def on_comment_saved(sender, instance, created, **kwargs):
     """On save: invalidate cache, queue image resize if needed, broadcast event via WebSocket."""
+    cache.delete_pattern("comments_list:*")  # type: ignore[union-attr]
+
     if created:
         logger.info("New comment created: id=%s", instance.id)
-        cache.delete("comments_list")
+
         if instance.image_file:
             comment_image_resize_task.apply_async(kwargs={"comment_id": instance.id})
             logger.info("Image resize task queued for comment %s", instance.id)
@@ -37,7 +39,8 @@ def on_comment_saved(sender, instance, created, **kwargs):
 
 @receiver(post_delete, sender=Comment)
 def on_comment_deleted(sender, instance, **kwargs):
-    """On delete: broadcast deleted event with comment id via WebSocket."""
+    """On delete: invalidate cache and broadcast deleted event with comment id via WebSocket."""
+    cache.delete_pattern("comments_list:*")  # type: ignore[union-attr]
     async_to_sync(channel_layer.group_send)(
         "comments",
         {

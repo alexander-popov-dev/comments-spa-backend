@@ -1,5 +1,6 @@
 import logging
 
+from django.core.cache import cache
 from django.db.models import Count
 from rest_framework import permissions, status
 from rest_framework.decorators import action
@@ -20,6 +21,8 @@ from comments.serializers import (
 )
 from comments.services import CaptchaService
 
+COMMENTS_LIST_CACHE_TIMEOUT = 60 * 30  # 30 minutes
+
 logger = logging.getLogger(__name__)
 
 
@@ -36,6 +39,20 @@ class CommentViewSet(ModelViewSet):
             return Comment.objects.filter(parent_comment=None).annotate(replies_count=Count("replies"))
 
         return Comment.objects.all()
+
+    def list(self, request, *args, **kwargs):
+        """Return paginated comments list, served from cache when available."""
+        ordering = request.query_params.get("ordering", "-created_at")
+        page = request.query_params.get("page", "1")
+        cache_key = f"comments_list:{ordering}:{page}"
+
+        cached = cache.get(cache_key)
+        if cached is not None:
+            return Response(cached)
+
+        response = super().list(request, *args, **kwargs)
+        cache.set(cache_key, response.data, timeout=COMMENTS_LIST_CACHE_TIMEOUT)
+        return response
 
     def get_permissions(self):
         """Allow only authenticated owners to update or delete comments."""
