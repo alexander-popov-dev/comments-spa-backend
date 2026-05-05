@@ -162,3 +162,6 @@ Available after startup:
 ## Database Schema
 
 The database schema file (MySQL Workbench compatible) is located in the repository root: [db_schema.mwb](db_schema.mwb)
+
+## Live Demo
+http://77.237.241.30:5555/
